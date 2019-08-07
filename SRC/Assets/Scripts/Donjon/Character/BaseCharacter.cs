@@ -13,7 +13,7 @@ namespace Donjon.Character
 
 		private EDirection m_currentDir;
 
-		public BaseCharacter(CharacterData data, Vector2Int pos)
+		public BaseCharacter(CharacterData data, Point pos)
 		{
 			UiComponent = new UiComponent(this);
 			MoveComponent = new MovementComponent(this, pos);
@@ -34,7 +34,7 @@ namespace Donjon.Character
 
 		}
 
-		public void SetPosition(Vector2Int pos)
+		public void SetPosition(Point pos)
 		{
 			MoveComponent.SetPosition(pos);
 		}

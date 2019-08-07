@@ -7,7 +7,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 	public UiCharacter UiPlayer;
-	private Vector2Int m_currentPos = Vector2Int.zero;
+    private Point m_currentPos;
 
 	private void Update()
 	{

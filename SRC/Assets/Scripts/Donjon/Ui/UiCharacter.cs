@@ -21,7 +21,7 @@ namespace Donjon
 		{
 		}
 
-		public void UpdatePos(Vector2Int pos)
+		public void UpdatePos(Point pos)
 		{
 			m_trans.position = UiUtils.GetWorldPositionFromCellPosition(pos);
 		}

@@ -4,28 +4,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AStar
+public static class AStar
 {
     private struct Tile
     {
         public float g, h, f;
-
-        public Vector2Int parentPos;
+        public Point parentPos;
     }
 
     public struct FandPos
     {
         public float f;
-        public Vector2Int pos;
+        public Point pos;
     }
 
     
-    public void Search(
-        Func<Vector2Int> isCellValid, 
-        Floor floor, 
-        Vector2Int startPos,
-        Vector2Int endPos)
+    public static void Search( 
+        Floor floor,
+        Point startPos,
+        Point endPos,
+        out Stack<Point> path)
     {
+        path = null;
         if (!floor.IsValidPosition(startPos))
             return;
 
@@ -34,77 +34,80 @@ public class AStar
 
         //Test start end blocked
 
-        var closeList = new bool[floor.YLength, floor.XLength];
+        var closedList = new bool[floor.YLength, floor.XLength];
         var cellDetails = new Tile[floor.YLength, floor.XLength];
         for (int i = 0; i < floor.YLength; i++)
         {
             for (int j = 0; j < floor.XLength; j++)
             {
-                cellDetails[i,j].f = float.MaxValue;
-                cellDetails[i,j].g = float.MaxValue;
-                cellDetails[i,j].h = float.MaxValue;
-                cellDetails[i, j].parentPos = new Vector2Int(-1, -1);
+                cellDetails[i, j] = new Tile()
+                {
+                    f = float.MaxValue,
+                    g = float.MaxValue,
+                    h = float.MaxValue,
+                    parentPos = new Point(-1, -1),
+                };
             }
         }
 
-        // add starting node to open list
 
-        var yIndex = startPos.y;
-        var xIndex = startPos.x;
-        cellDetails[yIndex,xIndex].f = 0.0f;
-        cellDetails[yIndex,xIndex].g = 0.0f;
-        cellDetails[yIndex,xIndex].h = 0.0f;
-        cellDetails[yIndex, xIndex].parentPos = startPos;
+        cellDetails[startPos.Y, startPos.X] = new Tile() { g = 0.0f, h = 0.0f, parentPos = startPos };
 
         var openList = new HashSet<FandPos>();
+        openList.Add(new FandPos() { f = 0f, pos = startPos });
+
+        // add starting node to open list
 
         while (openList.Count != 0)
         {
             //find node with the small f in openList
-            var q = openList.GetEnumerator().Current;
-            openList.Remove(q);
+            var enumerator = openList.GetEnumerator();
+            enumerator.MoveNext();
+            var q = enumerator.Current;
+            if (!openList.Remove(q))
+            {
+                throw new Exception();
+            }
             startPos = q.pos;
-            closeList[startPos.y, startPos.x] = true;
+            closedList[startPos.Y, startPos.X] = true;
 
             //generate q's 8 successors and set their parents to q
             Tile[] successors = new Tile[8];
-            foreach (var successor in successors)
+
+             if (IterateSideCell(floor, q.pos.Y + 1, q.pos.X, q.pos, endPos, cellDetails, closedList, openList) ||
+                 IterateSideCell(floor, q.pos.Y - 1, q.pos.X, q.pos, endPos, cellDetails, closedList, openList) ||
+                 IterateSideCell(floor, q.pos.Y, q.pos.X + 1, q.pos, endPos, cellDetails, closedList, openList) ||
+                 IterateSideCell(floor, q.pos.Y, q.pos.X - 1, q.pos, endPos, cellDetails, closedList, openList))
             {
-                var isGoal = false; // IsSuccessorGoal
-                if (isGoal)
+                // finished
+                path = new Stack<Point>();
+
+                var itY = endPos.Y;
+                var itX = endPos.X;
+                while (cellDetails[itY, itX].parentPos != endPos)
                 {
-                    successor.g = q.g + distanceSuccessorQ;
-                    successor.h = distanceGoalSuccessor;
-                    return;
+                    path.Push(endPos);
+                    endPos = cellDetails[itY, itX].parentPos;
+                    itY = endPos.Y;
+                    itX = endPos.X;
                 }
 
-                var hasNodeSamePos = openList.Find(item => item.pos == successor.parentPos && item.f <= successor.f) != null;
+                //path.Push(endPos);
 
-                if (hasNodeSamePos)
-                    continue;
-
-
-                hasNodeSamePos = closeList.Find(item => item.pos == successor.parentPos && item.f <= successor.f) != null;
-
-                if (hasNodeSamePos)
-                    continue;
-
-                openList.Add(successor);
+                return;
             }
-
-            closeList.Add(q);
         }
 
         return;
     }
 
-    private static bool IsNValid(
+    private static bool IterateSideCell(
         Floor floor, int yPos, int xPos,
-        Vector2Int currentPos, Vector2Int endPos, 
+        Point currentPos, Point endPos, 
         Tile[,] cellDetails, bool[,] closedList,
         HashSet<FandPos> openList)
     {
-        var pos = new Vector2Int(xPos, yPos);
+        var pos = new Point(xPos, yPos);
         if (!floor.IsValidPosition(pos))
             return false;
 
@@ -113,17 +116,17 @@ public class AStar
         if (pos == endPos)
         {
             // Set the Parent of the destination cell 
-            cellDetails[pos.y, pos.x].parentPos = currentPos;
+            cellDetails[pos.Y, pos.X].parentPos = currentPos;
             return true;
         }
         // If the successor is already on the closed 
         // list or if it is blocked, then ignore it. 
         // Else do the following 
-        if (closedList[pos.y, pos.x] != false || !floor.isUnBlocked(pos))
+        if (closedList[pos.Y, pos.X] != false || floor.IsBlocked(pos))
             return false;
 
-        var gNew = cellDetails[currentPos.y, currentPos.x].g + 1.0;
-        var hNew = calculateHValue(pos, endPos);
+        var gNew = cellDetails[currentPos.Y, currentPos.X].g + 1f;
+        var hNew = CalculateHeuresticValue(pos, endPos);
         var fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to 
@@ -134,15 +137,19 @@ public class AStar
         // If it is on the open list already, check 
         // to see if this path to that square is better, 
         // using 'f' cost as the measure. 
-        if (cellDetails[pos.y, pos.x].f != float.MaxValue && cellDetails[pos.y, pos.x].f <= fNew)
+        if (cellDetails[pos.Y, pos.X].f != float.MaxValue && cellDetails[pos.Y, pos.X].f <= fNew)
             return false;
 
         openList.Add(new FandPos() { f = fNew, pos = pos });
 
         // Update the details of this cell 
-        cellDetails[pos.y, pos.x].f = fNew;
-        cellDetails[pos.y, pos.x].g = gNew;
-        cellDetails[pos.y, pos.x].h = hNew;
-        cellDetails[pos.y, pos.x].parentPos = currentPos;
+        cellDetails[pos.Y, pos.X] = new Tile() { f = fNew, g = gNew, h = hNew, parentPos = currentPos };
+
+        return false;
+    }
+
+    private static float CalculateHeuresticValue(Point posA, Point posB)
+    {
+        return Mathf.Abs(posA.X - posB.X) + Mathf.Abs(posA.Y - posB.Y);
     }
 }

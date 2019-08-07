@@ -17,11 +17,11 @@ namespace Donjon
 				ORIGIN.x + X_UNIT * 0.5f, ORIGIN.y + Y_UNIT * 0.5f, ORIGIN.z);
 		}
 
-		public static Vector3 GetWorldPositionFromCellPosition(Vector2Int cellPosition)
+		public static Vector3 GetWorldPositionFromCellPosition(Point cellPosition)
 		{
 			return new Vector3(
-				ORIGIN_MIDDLE_CELL.x + X_UNIT * cellPosition.x,
-				ORIGIN_MIDDLE_CELL.y + Y_UNIT * cellPosition.y,
+				ORIGIN_MIDDLE_CELL.x + X_UNIT * cellPosition.X,
+				ORIGIN_MIDDLE_CELL.y + Y_UNIT * cellPosition.Y,
 				ORIGIN_MIDDLE_CELL.z);
 		}
 	}

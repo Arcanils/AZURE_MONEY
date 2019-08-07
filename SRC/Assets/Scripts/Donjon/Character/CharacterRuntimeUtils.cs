@@ -6,7 +6,7 @@ namespace Donjon.Character
 {
 	public static class CharacterRuntimeUtils
 	{
-		public static Vector2Int GetPositionWithDir(EDirection dir)
+		public static Point GetPositionWithDir(EDirection dir)
 		{
 			var iDir = (int)dir;
 			var x = 0;
@@ -22,7 +22,7 @@ namespace Donjon.Character
 				++x;
 
 			//Debug.LogFormat("GetPositionWithDir {0} => x:{1} y:{2}", dir, x, y);
-			return new Vector2Int(x, y);
+			return new Point(x, y);
 		}
 
 		public static bool MatchEnumMask(int enumValue, int enumValueToTest)
@@ -30,7 +30,7 @@ namespace Donjon.Character
 			return (enumValue & enumValueToTest) != 0;
 		}
 
-		public static Vector2Int GetPositionWithDir(Vector2Int basePos, EDirection dir)
+		public static Point GetPositionWithDir(Point basePos, EDirection dir)
 		{
 			return GetPositionWithDir(dir) + basePos;
 		}

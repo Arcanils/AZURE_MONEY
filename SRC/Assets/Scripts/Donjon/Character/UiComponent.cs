@@ -15,7 +15,7 @@ namespace Donjon.Character
 			UiTrans = m_uiCharacter.transform;
 		}
 
-		public void UpdatePos(Vector2Int pos)
+		public void UpdatePos(Point pos)
 		{
 			m_uiCharacter.UpdatePos(pos);
 		}

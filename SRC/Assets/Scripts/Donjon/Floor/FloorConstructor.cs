@@ -30,7 +30,7 @@ namespace Donjon
 				for (int j = 0; j < xLength; j++)
 				{
 					var wall = i == 0 || i == yLength - 1 || j == 0 || j == xLength - 1;
-					cells[i, j] = new Cell(wall ? ECellType.Wall : ECellType.Floor, new Vector2Int(j, i));
+					cells[i, j] = new Cell(wall ? ECellType.Wall : ECellType.Floor, new Point(j, i));
 					tilemap.SetTile(new Vector3Int(j, i, 0), tiles[wall ? 0 : 1]);
 					//Debug.LogFormat("Wall [{0},{1}] {2}", i, j, wall);
 				}

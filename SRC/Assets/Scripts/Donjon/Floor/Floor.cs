@@ -19,14 +19,20 @@ namespace Donjon
 			Debug.Log("Init Floor");
 		}
 
-		public Cell GetCell(Vector2Int pos)
+		public Cell GetCell(Point pos)
 		{
-			return IsValidPosition(pos) ? Cells[pos.y, pos.x] : null;
+			return IsValidPosition(pos) ? Cells[pos.Y, pos.X] : null;
 		}
 
-        public bool IsValidPosition(Vector2Int posToTest)
+        public bool IsValidPosition(Point posToTest)
         {
-            return posToTest.y < YLength && posToTest.y >= 0 && posToTest.x < XLength && posToTest.x >= 0;
+            return posToTest.Y < YLength && posToTest.Y >= 0 && posToTest.X < XLength && posToTest.X >= 0;
+        }
+
+        public bool IsBlocked(Point posToTest)
+        {
+            var cell = GetCell(posToTest);
+            return cell == null || cell.IsCellBlocked();
         }
 
     }

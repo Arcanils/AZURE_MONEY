@@ -22,6 +22,8 @@ namespace Donjon
 				m_char.AiComponent.Move(EDirection.Right);
 			if (Input.GetKeyDown(KeyCode.LeftArrow))
 				m_char.AiComponent.Move(EDirection.Left);
+            if (Input.GetMouseButtonDown(0))
+                m_char.AiComponent.Move(UiGridPlayerInput.ConvertInputUIIntoPoint(Input.mousePosition));
 		}
 	}
 }

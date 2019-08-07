@@ -30,10 +30,10 @@ namespace Donjon
 		{
 			FloorConstructor.Construct(m_characterManager, m_floorManager, null, null, null, tilemap, tiles);
 
-			m_player = new BaseCharacter(null, new Vector2Int(1,1));
+			m_player = new BaseCharacter(null, new Point(1,1));
 			m_playerController = new PlayerController(m_player);
 
-			m_enemy = new BaseCharacter(null, new Vector2Int(3, 3));
+			m_enemy = new BaseCharacter(null, new Point(3, 3));
 			m_enemyController = new EnemyController(m_enemy);
 		}
 

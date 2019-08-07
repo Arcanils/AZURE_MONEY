@@ -32,7 +32,7 @@ namespace Donjon
 			var instance = GameObject.Instantiate(m_uiCharacterPrefab, m_container, true);
 			var trans = instance.transform;
 
-			trans.position = UiUtils.GetWorldPositionFromCellPosition(Vector2Int.zero);
+			trans.position = UiUtils.GetWorldPositionFromCellPosition(new Point());
 
 			var script = instance.GetComponent<UiCharacter>();
 			script.InitGraph();

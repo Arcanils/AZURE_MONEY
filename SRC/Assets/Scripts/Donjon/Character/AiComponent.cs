@@ -15,5 +15,17 @@ namespace Donjon.Character
 		{
 			m_char.MoveComponent.Move(dir);
 		}
+
+        public void Move(Point destination)
+        {
+            Stack<Point> path;
+            AStar.Search(FloorManager.GetFloor(), m_char.MoveComponent.CurrentPos, destination, out path);
+
+            if (path == null || path.Count == 0)
+                return;
+
+            var nextPos = path.Pop();
+            m_char.MoveComponent.Move(nextPos);
+        }
 	}
 }

@@ -8,9 +8,9 @@ namespace Donjon.Character
 	{
 		private EDirection m_dir;
 
-		public Vector2Int CurrentPos { get; private set; }
+		public Point CurrentPos { get; private set; }
 
-		public MovementComponent(BaseCharacter character, Vector2Int pos) : base(character)
+		public MovementComponent(BaseCharacter character, Point pos) : base(character)
 		{
 			CurrentPos = pos;
 			FloorManager.SetCharToCell(pos, character);
@@ -22,7 +22,12 @@ namespace Donjon.Character
 			FloorManager.MoveToCell(CurrentPos, m_dir, m_char);
 		}
 
-		public void SetPosition(Vector2Int newPos)
+        public void Move(Point nextPos)
+        {
+            FloorManager.MoveToCell(CurrentPos, nextPos, m_char);
+        }
+
+		public void SetPosition(Point newPos)
 		{
 			Debug.LogFormat("SetPosition {0} => {1}", CurrentPos, newPos);
 			CurrentPos = newPos;
