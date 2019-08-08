@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class AStar
@@ -12,10 +13,15 @@ public static class AStar
         public Point parentPos;
     }
 
-    public struct FandPos
+    public struct FandPos : IComparable<FandPos>
     {
         public float f;
         public Point pos;
+
+        public int CompareTo(FandPos other)
+        {
+            return (int)(other.f - f);
+        }
     }
 
     
@@ -26,6 +32,10 @@ public static class AStar
         out Stack<Point> path)
     {
         path = null;
+
+        if (startPos == endPos)
+            return;
+
         if (!floor.IsValidPosition(startPos))
             return;
 
@@ -53,21 +63,20 @@ public static class AStar
 
         cellDetails[startPos.Y, startPos.X] = new Tile() { g = 0.0f, h = 0.0f, parentPos = startPos };
 
-        var openList = new HashSet<FandPos>();
-        openList.Add(new FandPos() { f = 0f, pos = startPos });
+        var openList = new List<FandPos>
+        {
+            new FandPos() { f = 0f, pos = startPos }
+        };
 
         // add starting node to open list
+        var limitHack = 100;
 
-        while (openList.Count != 0)
+        while (openList.Count != 0 && --limitHack > 0)
         {
             //find node with the small f in openList
-            var enumerator = openList.GetEnumerator();
-            enumerator.MoveNext();
-            var q = enumerator.Current;
-            if (!openList.Remove(q))
-            {
-                throw new Exception();
-            }
+            var q = openList[openList.Count - 1];
+            openList.RemoveAt(openList.Count - 1);
+
             startPos = q.pos;
             closedList[startPos.Y, startPos.X] = true;
 
@@ -92,6 +101,7 @@ public static class AStar
                     itX = endPos.X;
                 }
 
+                DisplayPath(path);
                 //path.Push(endPos);
 
                 return;
@@ -101,11 +111,29 @@ public static class AStar
         return;
     }
 
+    private static void DisplayPath(Stack<Point> pathToDisplay)
+    {
+        var str = new System.Text.StringBuilder();
+
+        var copyPath = new Stack<Point>(pathToDisplay.Reverse());
+        var iStep = 0;
+        while (copyPath.Count != 0)
+        {
+            var pos = copyPath.Pop();
+            str.Append((++iStep).ToString());
+            str.Append(':');
+            str.Append(pos);
+            str.Append('\n');
+        }
+
+        Debug.Log(str.ToString());
+    }
+
     private static bool IterateSideCell(
         Floor floor, int yPos, int xPos,
         Point currentPos, Point endPos, 
         Tile[,] cellDetails, bool[,] closedList,
-        HashSet<FandPos> openList)
+        List<FandPos> openList)
     {
         var pos = new Point(xPos, yPos);
         if (!floor.IsValidPosition(pos))
@@ -140,8 +168,10 @@ public static class AStar
         if (cellDetails[pos.Y, pos.X].f != float.MaxValue && cellDetails[pos.Y, pos.X].f <= fNew)
             return false;
 
-        openList.Add(new FandPos() { f = fNew, pos = pos });
-
+        var newItem = new FandPos() { f = fNew, pos = pos };
+        if (!openList.Contains(newItem))
+            openList.Add(newItem);
+        openList.Sort();
         // Update the details of this cell 
         cellDetails[pos.Y, pos.X] = new Tile() { f = fNew, g = gNew, h = hNew, parentPos = currentPos };
 
