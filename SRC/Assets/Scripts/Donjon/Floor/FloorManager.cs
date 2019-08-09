@@ -8,13 +8,20 @@ namespace Donjon
 	public class FloorManager
 	{
 		private Floor m_floor;
+        private Vector2 m_cellSize;
+        private Vector2 m_gridOrigin;
 
 		private static FloorManager m_instance;
 
-		public FloorManager()
+        public static Vector2 CellSize { get { return m_instance.m_cellSize; } }
+        public static Vector2 GridOrigin { get { return m_instance.m_gridOrigin; } }
+
+        public FloorManager(Vector3 cellSize, Vector3 gridOrigin)
 		{
 			m_instance = this;
-		}
+            m_cellSize = new Vector2(cellSize.x, cellSize.y);
+            m_gridOrigin = new Vector2(gridOrigin.x, gridOrigin.y);
+        }
 
 		public void InitFloor(Floor floor)
 		{

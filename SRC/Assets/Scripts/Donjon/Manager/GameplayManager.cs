@@ -18,12 +18,12 @@ namespace Donjon
 		private BaseController m_enemyController;
 
 
-		public GameplayManager()
+		public GameplayManager(Grid tileGrid)
 		{
 			Debug.Log("Init GameplayManager");
 			m_characterManager = new CharacterManager();
-			m_floorManager = new FloorManager();
-			m_camManager = new CameraManager(Camera.main);
+			m_floorManager = new FloorManager(tileGrid.cellSize, tileGrid.transform.position);
+			m_camManager = new CameraManager(Camera.main, -Camera.main.transform.position.z);
 		}
 
 		public void InitNewFloor(Tilemap tilemap, TileBase[] tiles)

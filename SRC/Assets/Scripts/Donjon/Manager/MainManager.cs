@@ -10,7 +10,7 @@ namespace Donjon
 		public FloorData FloorDataTMP;
 		public TileBase[] Tiles;
 		public Tilemap Tilemap;
-
+        public Grid TileGrid;
 		private GameplayManager m_gameplayManager;
 
 		private void Awake()
@@ -25,7 +25,7 @@ namespace Donjon
 
 		private void InitMain()
 		{
-			m_gameplayManager = new GameplayManager();
+			m_gameplayManager = new GameplayManager(TileGrid);
 		}
 
 		public void InitFloor()

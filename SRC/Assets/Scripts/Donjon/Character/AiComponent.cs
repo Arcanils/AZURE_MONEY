@@ -18,6 +18,7 @@ namespace Donjon.Character
 
         public void Move(Point destination)
         {
+            Debug.LogFormat("[AIComponent]: Move to {0}", destination);
             Stack<Point> path;
             AStar.Search(FloorManager.GetFloor(), m_char.MoveComponent.CurrentPos, destination, out path);
 

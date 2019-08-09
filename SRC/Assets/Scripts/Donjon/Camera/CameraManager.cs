@@ -17,15 +17,20 @@ namespace Donjon
 		private ECameraMode m_currentMode;
 		private Camera m_cam;
 		private Transform m_camTrans;
+        private float m_depthCam;
 
 		private static CameraManager m_instance;
 
-		public CameraManager(Camera cam)
+        public static Camera MainCam { get { return m_instance.m_cam; } }
+        public static float DepthCam { get { return m_instance.m_depthCam; } }
+
+        public CameraManager(Camera cam, float depthCam)
 		{
 			m_instance = this;
 			m_cam = cam;
 			m_camTrans = m_cam.transform;
-		}
+            m_depthCam = depthCam;
+        }
 
 		public IEnumerator MoveToPosEnum(Vector2Int position)
 		{
