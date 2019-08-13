@@ -11,10 +11,15 @@ namespace Donjon.Character
 		public AiComponent AiComponent { get; private set; }
 		public CameraComponent CamComponent { get; private set; }
 
+
+
+        public bool IsPlayer { get; private set; }
+
 		private EDirection m_currentDir;
 
-		public BaseCharacter(CharacterData data, Point pos)
+		public BaseCharacter(CharacterData data, Point pos, bool isPlayer)
 		{
+            IsPlayer = isPlayer;
 			UiComponent = new UiComponent(this);
 			MoveComponent = new MovementComponent(this, pos);
 			AiComponent = new AiComponent(this);

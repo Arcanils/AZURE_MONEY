@@ -8,38 +8,33 @@ namespace Donjon
 {
 	public class GameplayManager 
 	{
+        private TurnManager m_turnManager;
 		private CharacterManager m_characterManager;
 		private FloorManager m_floorManager;
 		private CameraManager m_camManager;
-		private BaseCharacter m_player;
-		private BaseController m_playerController;
-
-		private BaseCharacter m_enemy;
-		private BaseController m_enemyController;
 
 
 		public GameplayManager(Grid tileGrid)
 		{
 			Debug.Log("Init GameplayManager");
-			m_characterManager = new CharacterManager();
-			m_floorManager = new FloorManager(tileGrid.cellSize, tileGrid.transform.position);
-			m_camManager = new CameraManager(Camera.main, -Camera.main.transform.position.z);
-		}
+            m_floorManager = new FloorManager(tileGrid.cellSize, tileGrid.transform.position);
+        }
 
 		public void InitNewFloor(Tilemap tilemap, TileBase[] tiles)
 		{
 			FloorConstructor.Construct(m_characterManager, m_floorManager, null, null, null, tilemap, tiles);
-
-			m_player = new BaseCharacter(null, new Point(1,1));
-			m_playerController = new PlayerController(m_player);
-
-			m_enemy = new BaseCharacter(null, new Point(3, 3));
-			m_enemyController = new EnemyController(m_enemy);
-		}
+            m_camManager = new CameraManager(Camera.main, -Camera.main.transform.position.z);
+            m_characterManager = new CharacterManager(new List<BaseCharacter>()
+            {
+                new BaseCharacter(null, new Point(1,1), true),
+            });
+            m_turnManager = new TurnManager(m_characterManager);
+        }
 
 		public void ManualUpdate()
 		{
-			m_playerController.ManualUpdate();
-		}
+            m_characterManager.ManualUpdate();
+            m_turnManager.ManualUpdate();
+        }
 	}
 }

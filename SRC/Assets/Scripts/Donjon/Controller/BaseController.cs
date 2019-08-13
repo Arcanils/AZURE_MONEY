@@ -19,5 +19,20 @@ namespace Donjon
 		{
 
 		}
+
+        public virtual void Think()
+        {
+
+        }
+
+        public virtual void Execute()
+        {
+
+        }
+
+        public float GetCharacterSpeed()
+        {
+            return 1f;
+        }
 	}
 }

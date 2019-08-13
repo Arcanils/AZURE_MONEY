@@ -7,23 +7,35 @@ namespace Donjon
 {
 	public class PlayerController : BaseController
 	{
+        private Stack<Point> m_path;
 		public PlayerController(BaseCharacter player) : base(player)
 		{
 			m_char.CamComponent.FollowCharacter();
 		}
 
-		public override void ManualUpdate()
+        public override void Think()
+        {
+        }
+
+        public override void Execute()
+        {
+            if (m_path == null || m_path.Count == 0)
+                return;
+
+            m_char.AiComponent.Move(m_path.Pop());
+        }
+
+        public override void ManualUpdate()
 		{
-			if (Input.GetKeyDown(KeyCode.DownArrow))
-				m_char.AiComponent.Move(EDirection.Bottom);
-			if (Input.GetKeyDown(KeyCode.UpArrow))
-				m_char.AiComponent.Move(EDirection.Top);
-			if (Input.GetKeyDown(KeyCode.RightArrow))
-				m_char.AiComponent.Move(EDirection.Right);
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-				m_char.AiComponent.Move(EDirection.Left);
-            if (Input.GetMouseButtonDown(0))
-                m_char.AiComponent.Move(UiGridPlayerInput.ConvertInputUIIntoPoint(Input.mousePosition));
-		}
+            if (!Input.GetMouseButtonDown(0))
+                return;
+            SetPath();
+        }
+
+        private void SetPath()
+        {
+            var destination = UiGridPlayerInput.ConvertInputUIIntoPoint(Input.mousePosition);
+            AStar.Search(FloorManager.GetFloor(), m_char.MoveComponent.CurrentPos, destination, out m_path);
+        }
 	}
 }
