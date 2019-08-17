@@ -1,0 +1,9 @@
+/SRC/v15
+/SRC/Library
+*.csproj
+*.sln
+/SRC/Temp/TarGZ
+/SRC/Temp
+/BUILD
+/SRC/.vs
+/SRC/Logs

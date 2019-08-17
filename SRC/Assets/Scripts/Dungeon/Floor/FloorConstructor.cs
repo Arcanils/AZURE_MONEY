@@ -25,14 +25,14 @@ namespace Dungeon
 			var yLength = data.YSize;
 			var xLength = data.XSize;
 			var cells = new Cell[yLength, xLength];
-			for (int i = 0; i < yLength; i++)
+			for (int y = 0; y < yLength; y++)
 			{
-				for (int j = 0; j < xLength; j++)
+				for (int x = 0; x < xLength; x++)
 				{
-                    var indexTile = j + i * yLength;
+                    var indexTile = x + y * xLength;
                     var wall = data.TilesData[indexTile] == 0;
-                    cells[i, j] = new Cell(wall ? ECellType.Wall : ECellType.Floor, new Point(j, i));
-					tilemap.SetTile(new Vector3Int(j, i, 0), tiles[wall ? 0 : 1]);
+                    cells[y, x] = new Cell(wall ? ECellType.Wall : ECellType.Floor, new Point(x, y));
+					tilemap.SetTile(new Vector3Int(x, y, 0), tiles[wall ? 0 : 1]);
 					//Debug.LogFormat("Wall [{0},{1}] {2}", i, j, wall);
 				}
 			}
