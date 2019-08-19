@@ -10,12 +10,16 @@ namespace Dungeon.Character
 		public UiComponent UiComponent { get; private set; }
 		public AiComponent AiComponent { get; private set; }
 		public CameraComponent CamComponent { get; private set; }
+		public StatsComponent StatsComponent { get; private set; }
 
 
 
         public bool IsPlayer { get; private set; }
 
 		private EDirection m_currentDir;
+		private string m_name;
+
+		private static int s_idChar;
 
 		public BaseCharacter(CharacterData data, Point pos, bool isPlayer)
 		{
@@ -25,6 +29,8 @@ namespace Dungeon.Character
 			AiComponent = new AiComponent(this);
 			CamComponent = new CameraComponent(this);
 			SetPosition(MoveComponent.CurrentPos);
+
+			m_name = IsPlayer ? "PLAYER" : string.Format("BERTRAND_{0}", (++s_idChar).ToString("00"));
 		}
 
 		public TurnAction Execute()
@@ -42,6 +48,11 @@ namespace Dungeon.Character
 		public void SetPosition(Point pos)
 		{
 			MoveComponent.SetPosition(pos);
+		}
+
+		public void StartDeath()
+		{
+			Debug.LogFormat("[CHARACTER] : {0} is dead :(", m_name);
 		}
 	}
 }
